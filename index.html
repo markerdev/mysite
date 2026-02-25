@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projektit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #1e1e1e;
+      --accent: #e8ff47;
+      --text: #f0f0f0;
+      --muted: #555;
+      --card-hover: #161616;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #root { min-height: 100vh; }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const projects = [
+      {
+        id: 1,
+        title: "Loiste",
+        url: "https://loiste.fi",
+        image: "./images/loiste.png",
+        tags: ["Gutenberg", "Custom Blocks", "PHP","React", "SCSS"],
+        year: "2025"
+      },
+      {
+        id: 2,
+        title: "Alajärven Sähkö",
+        url: "https://alajarvensahko.fi",
+        image: "./images/alajarvensahko.png",
+        tags: [ "Gutenberg", "Custom Blocks", "PHP", "React", "SCSS" ],
+        year: "2024"
+      },
+      {
+        id: 3,
+        title: "Noho",
+        url: "https://www.ravintolanjk.fi/",
+        image: "./images/noho.png",
+        tags: ["Gutenberg", "PHP", "React", "SCSS" ],
+        year: "2023"
+      },
+      {
+        id: 4,
+        title: "Vikingmalt",
+        url: "https://vikingmalt.com",
+        image: "./images/vikingmalt.png",
+        tags: ["Gutenberg", "PHP", "React", "SCSS" ],
+        year: "2023"
+      },
+      {
+        id: 5,
+        title: "Taimiteko",
+        url: "https://taimiteko.fi",
+        image: "./images/taimiteko.png",
+        tags: [ "WooCommerce", "Integraatiot", "PHP", "SCSS", "ACF"],
+        year: "2023"
+      },
+      {
+        id: 6,
+        title: "Glaston",
+        url: "https://brand.glaston.net",
+        image: "./images/glaston.png",
+        tags: [ "PHP", "ACF"],
+        year: "2021"
+      },
+      {
+        id: 7,
+        title: "Eumer",
+        url: "https://brand.eumer.fi",
+        image: "./images/eumer.png",
+        tags: [ "PHP", "ACF"],
+        year: "2021"
+      },
+      {
+        id: 8,
+        title: "Pankaboard",
+        url: "https://pankaboard.com",
+        image: "./images/panka.png",
+        tags: [ "PHP", "Ajax", "ACF", "SCSS"],
+        year: "2021"
+      }
+    ];
+
+    function Card({ project, index }) {
+      const [hovered, setHovered] = useState(false);
+      const [visible, setVisible] = useState(false);
+      const ref = useRef();
+
+      useEffect(() => {
+        const timer = setTimeout(() => setVisible(true), index * 80);
+        return () => clearTimeout(timer);
+      }, [index]);
+
+      return (
+        <div
+          ref={ref}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          style={{
+            background: hovered ? 'var(--card-hover)' : 'var(--surface)',
+            border: `1px solid ${hovered ? '#2a2a2a' : 'var(--border)'}`,
+            borderRadius: '4px',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+            transform: visible ? (hovered ? 'translateY(-4px)' : 'translateY(0)') : 'translateY(20px)',
+            opacity: visible ? 1 : 0,
+            boxShadow: hovered ? '0 20px 60px rgba(0,0,0,0.5)' : '0 0 0 rgba(0,0,0,0)',
+          }}
+          onClick={() => window.open(project.url, '_blank')}
+        >
+          {/* Image */}
+          <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '16/9' }}>
+            <img
+              src={project.image}
+              alt={project.title}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+                transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+                transform: hovered ? 'scale(1.05)' : 'scale(1)',
+                filter: hovered ? 'brightness(0.7)' : 'brightness(0.5)',
+              }}
+            />
+            {/* Year badge */}
+            <span style={{
+              position: 'absolute',
+              top: '12px',
+              right: '12px',
+              background: 'rgba(0,0,0,0.7)',
+              backdropFilter: 'blur(8px)',
+              color: 'var(--muted)',
+              fontSize: '11px',
+              letterSpacing: '0.1em',
+              padding: '4px 8px',
+              borderRadius: '2px',
+              fontFamily: 'Syne, sans-serif',
+            }}>{project.year}</span>
+
+            {/* Hover overlay */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: hovered ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+            }}>
+              <span style={{
+                fontFamily: 'Syne, sans-serif',
+                fontSize: '13px',
+                letterSpacing: '0.15em',
+                color: 'var(--accent)',
+                textTransform: 'uppercase',
+                border: '1px solid var(--accent)',
+                padding: '10px 20px',
+                borderRadius: '2px',
+              }}>Vieraile →</span>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div style={{ padding: '20px' }}>
+            <h2 style={{
+              fontFamily: 'Syne, sans-serif',
+              fontSize: '18px',
+              fontWeight: 700,
+              marginBottom: '10px',
+              color: hovered ? '#fff' : 'var(--text)',
+              transition: 'color 0.2s ease',
+            }}>{project.title}</h2>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              {project.tags.map(tag => (
+                <span key={tag} style={{
+                  fontSize: '11px',
+                  letterSpacing: '0.05em',
+                  color: 'var(--muted)',
+                  background: 'rgba(255,255,255,0.04)',
+                  padding: '3px 8px',
+                  borderRadius: '2px',
+                  border: '1px solid var(--border)',
+                  fontFamily: 'DM Sans, sans-serif',
+                }}>{tag}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [headerVisible, setHeaderVisible] = useState(false);
+
+      useEffect(() => {
+        setTimeout(() => setHeaderVisible(true), 100);
+      }, []);
+
+      const filtered = projects;
+
+      return (
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px 80px' }}>
+
+          {/* Header */}
+          <header style={{
+            padding: '60px 0 48px',
+            borderBottom: '1px solid var(--border)',
+            marginBottom: '48px',
+            opacity: headerVisible ? 1 : 0,
+            transform: headerVisible ? 'translateY(0)' : 'translateY(-16px)',
+            transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+              <div>
+                <p style={{
+                  fontFamily: 'Syne, sans-serif',
+                  fontSize: '11px',
+                  letterSpacing: '0.25em',
+                  textTransform: 'uppercase',
+                  color: 'var(--accent)',
+                  marginBottom: '12px',
+                }}>— Portfolio</p>
+                <h1 style={{
+                  fontFamily: 'Syne, sans-serif',
+                  fontSize: 'clamp(36px, 6vw, 72px)',
+                  fontWeight: 800,
+                  lineHeight: 1,
+                  letterSpacing: '-0.02em',
+                }}>Projektit</h1>
+              </div>
+              <p style={{
+                color: 'var(--muted)',
+                fontSize: '14px',
+                maxWidth: '280px',
+                lineHeight: 1.6,
+                textAlign: 'right',
+              }}>{projects.length} projektia · WordPress </p>
+            </div>
+          </header>
+
+          {/* Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+            gap: '20px',
+          }}>
+            {filtered.map((project, i) => (
+              <Card key={project.id} project={project} index={i} />
+            ))}
+          </div>
+
+          {/* Footer */}
+          <footer style={{
+            marginTop: '80px',
+            paddingTop: '32px',
+            borderTop: '1px solid var(--border)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px',
+          }}>
+            <span style={{ fontFamily: 'Syne, sans-serif', fontSize: '12px', color: 'var(--muted)', letterSpacing: '0.1em' }}>
+              © {new Date().getFullYear()} — Kaikki oikeudet pidätetään
+            </span>
+            <span style={{ fontFamily: 'Syne, sans-serif', fontSize: '11px', color: 'var(--border)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              Totte Blomqvist
+            </span>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
